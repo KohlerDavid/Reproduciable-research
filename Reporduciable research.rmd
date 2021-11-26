@@ -1,0 +1,84 @@
+---
+title: "Coursera Reproduciable research"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1.Code for reading in the dataset and/or processing the data
+
+Import of dataset make sure that working directory is set right
+```{r}
+activity <- read.csv("~/activity.csv")
+head(activity)
+```
+
+## 2. Histogram of the total number of steps taken each day
+
+Aggregate function is used to calculate the daily sum of steps. NAs are removed
+
+```{r}
+sum_steps_daily <-aggregate(steps~date, activity, sum)
+hist(sum_steps_daily$steps, xlab ="Classes of steps per day", ylab = "number of days", main = "Total number of steps/ day")
+
+```
+
+## 3. Mean and median number of steps taken each day
+
+Use of mean and median function to calculate the values
+
+```{r}
+mean(sum_steps_daily$steps)
+median(sum_steps_daily$steps)
+```
+
+## 4.Time series plot of the average number of steps taken
+
+Use of aggregate function to create a data frame with mean steps per interval 
+
+```{r}
+mean_steps_interval<-aggregate(steps~interval , activity, mean)
+
+with(mean_steps_interval,plot(interval,steps,type = "l"))
+```
+
+## 5. The 5-minute interval that, on average, contains the maximum number of steps
+
+Use which.max function to determine the maxium number of steps and the report the interval using []
+
+```{r}
+mean_steps_interval[which.max(mean_steps_interval[,2]),1]
+```
+## 6. Code to describe and show a strategy for imputing missing data
+
+Firstly the missing values are identified using is.na.
+Then the mean of all intervals is determined.
+Then all the steps which are NA are replaced with the average of all intervals. The data frame without NAs is called "activity_no_NAS"  
+
+```{r}
+missing_values<-is.na(activity$steps)
+
+mean_of_all_intervals<-mean(mean_steps_interval$steps)
+
+activity_no_NAS<-activity
+activity_no_NAS[missing_values,1]<-mean_of_all_intervals
+head(activity_no_NAS)
+```
+
+## 7. Histogram of the total number of steps taken each day after missing values are imputed
+
+Copy paste of code for task 2 -> use data frame with no NAs
+
+```{r}
+sum_steps_daily_no_NAs <-aggregate(steps~date, activity_no_NAS, sum)
+hist(sum_steps_daily_no_NAs, xlab ="Classes of steps per day", ylab = "number of days", main = "Total number of steps/ day")
+
+```
+
+
+
+
+
+
